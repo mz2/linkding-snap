@@ -88,7 +88,8 @@ parts:
       sed -i '/playwright/d' requirements.dev.txt
       sed -i 's/www-data/root/g' uwsgi.ini
       sed -i 's/www-data/root/g' supervisord.conf
-      
+      sed -i 's/manage.py/$SNAP\/manage.py/g' background-tasks-wrapper.sh
+
       # set version and persist it
       last_committed_tag="$(git describe --tags --abbrev=0)"
       last_committed_tag_ver="$(echo ${last_committed_tag} | sed 's/v//')"
