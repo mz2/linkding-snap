@@ -17,6 +17,7 @@ ln -s /snap/$SNAP_INSTANCE_NAME/current/supervisord.conf $SNAP_COMMON/supervisor
 ln -s /snap/$SNAP_INSTANCE_NAME/current/bookmarks $SNAP_COMMON/bookmarks
 ln -s /snap/$SNAP_INSTANCE_NAME/current/static $SNAP_COMMON/static
 ln -s /snap/$SNAP_INSTANCE_NAME/current/siteroot $SNAP_COMMON/siteroot
+ln -s /snap/$SNAP_INSTANCE_NAME/current/background-tasks-wrapper.sh $SNAP_COMMON/background-tasks-wrapper.sh
 
 export BASE_DIR=$SNAP_COMMON
 
