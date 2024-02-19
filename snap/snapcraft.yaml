@@ -124,3 +124,4 @@ parts:
       cp -r bookmarks $CRAFT_PART_INSTALL
       cp version.txt $CRAFT_PART_INSTALL
       cp supervisord.conf $CRAFT_PART_INSTALL
+      cp background-tasks-wrapper.sh $CRAFT_PART_INSTALL
