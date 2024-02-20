@@ -43,16 +43,6 @@ apps:
       DJANGO_SETTINGS_MODULE: siteroot.settings.prod
 
 parts:
-  snapcraft-preload:
-    source: https://github.com/sergiusens/snapcraft-preload.git
-    plugin: cmake
-    cmake-parameters:
-      - -DCMAKE_INSTALL_PREFIX=/
-    build-packages:
-      - gcc-multilib
-      - g++-multilib
-    organize:
-      bin/snapcraft-preload: snapcraft-preload
   launcher:
     plugin: dump
     source-type: local
