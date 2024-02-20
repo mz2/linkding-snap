@@ -3,13 +3,5 @@ set -e
 
 export BASE_DIR=$SNAP_COMMON
 
-
-if [ -f $SNAP_COMMON/background-tasks-wrapper.sh ]; then
-    echo "background-tasks-wrapper.sh already exists"
-else
-    echo "Creating symlink to background-tasks-wrapper.sh"
-    ln -s /snap/$SNAP_INSTANCE_NAME/current/background-tasks-wrapper.sh $SNAP_COMMON/background-tasks-wrapper.sh
-fi
-
 echo "Running migrations"
 python3 $SNAP/manage.py migrate

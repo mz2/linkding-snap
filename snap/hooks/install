@@ -5,7 +5,6 @@ snapctl set host=127.0.0.1
 snapctl set port=9090
 snapctl set superuser-name='admin'
 snapctl set superuser-password=$(head -c 12 /dev/random | base64)
-snapctl set disable-background-tasks=false
 
 mkdir -p $SNAP_COMMON/data
 mkdir -p $SNAP_COMMON/data/favicons
@@ -17,7 +16,6 @@ ln -s /snap/$SNAP_INSTANCE_NAME/current/supervisord.conf $SNAP_COMMON/supervisor
 ln -s /snap/$SNAP_INSTANCE_NAME/current/bookmarks $SNAP_COMMON/bookmarks
 ln -s /snap/$SNAP_INSTANCE_NAME/current/static $SNAP_COMMON/static
 ln -s /snap/$SNAP_INSTANCE_NAME/current/siteroot $SNAP_COMMON/siteroot
-ln -s /snap/$SNAP_INSTANCE_NAME/current/background-tasks-wrapper.sh $SNAP_COMMON/background-tasks-wrapper.sh
 
 export BASE_DIR=$SNAP_COMMON
 
@@ -25,7 +23,15 @@ pushd $SNAP_COMMON
 echo "Generating secret key"
 python3 $SNAP/manage.py generate_secret_key
 
+echo "Migrating database"
+python3 $SNAP/manage.py migrate
+
 echo "Enabling WAL"
 python3 $SNAP/manage.py enable_wal
+
+echo "Create initial superuser"
+LD_SUPERUSER_NAME=$(snapctl get superuser-name) \
+LD_SUPERUSER_PASSWORD=$(snapctl get superuser-password) \
+    python3 $SNAP/manage.py create_initial_superuser
 popd
 

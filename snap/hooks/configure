@@ -2,18 +2,21 @@
 
 snapctl stop "$SNAP_INSTANCE_NAME"
 
-export LD_SUPERUSER_NAME=$(snapctl get superuser-name)
-export LD_SUPERUSER_PASSWORD=$(snapctl get superuser-password)
 export BASE_DIR=$SNAP_COMMON
 
+pushd $SNAP_COMMON
+echo "Migrating database"
+python3 $SNAP/manage.py migrate
+
 if [ -z "$LD_SUPERUSER_NAME" ]; then
-    echo "No superuser name provided -> skipping creating them."
+    echo "No superuser name provided -> skipping manipulating superuser."
 else
     echo "Ensuring superuser exists"
-    pushd $SNAP_COMMON
-    python3 $SNAP/manage.py create_initial_superuser
-    popd
+    LD_SUPERUSER_NAME=$(snapctl get superuser-name) \
+    LD_SUPERUSER_PASSWORD=$(snapctl get superuser-password) \
+        python3 $SNAP/manage.py create_initial_superuser
 fi
+popd
 
 echo "Starting service up again..."
 snapctl start "$SNAP_INSTANCE_NAME"

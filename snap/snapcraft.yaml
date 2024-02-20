@@ -13,26 +13,46 @@ apps:
   linkding:
     command: run.sh
     plugs:
-      - home
       - network
       - network-bind
     environment:
-      LD_HOST_DATA_DIR: $SNAP_COMMON/data
       BASE_DIR: $SNAP_COMMON/
+      LD_HOST_DATA_DIR: $SNAP_COMMON/data
   listener:
     command: run.sh
     daemon: simple
-    install-mode: disable
+    install-mode: enable
     restart-condition: on-failure
     plugs:
-      - home
       - network
       - network-bind
     environment:
-      LD_HOST_DATA_DIR: $SNAP_COMMON/data
       BASE_DIR: $SNAP_COMMON/
+      LD_HOST_DATA_DIR: $SNAP_COMMON/data
+  tasks:
+    after: [listener]
+    command: tasks.sh
+    daemon: simple
+    install-mode: enable
+    restart-condition: on-failure
+    plugs:
+      - network
+    environment:
+      BASE_DIR: $SNAP_COMMON/
+      LD_HOST_DATA_DIR: $SNAP_COMMON/data
+      DJANGO_SETTINGS_MODULE: siteroot.settings.prod
 
 parts:
+  snapcraft-preload:
+    source: https://github.com/sergiusens/snapcraft-preload.git
+    plugin: cmake
+    cmake-parameters:
+      - -DCMAKE_INSTALL_PREFIX=/
+    build-packages:
+      - gcc-multilib
+      - g++-multilib
+    organize:
+      bin/snapcraft-preload: snapcraft-preload
   launcher:
     plugin: dump
     source-type: local
@@ -87,8 +107,6 @@ parts:
       craftctl default
       sed -i '/playwright/d' requirements.dev.txt
       sed -i 's/www-data/root/g' uwsgi.ini
-      sed -i 's/www-data/root/g' supervisord.conf
-      sed -i 's/manage.py/$SNAP\/manage.py/g' background-tasks-wrapper.sh
 
       # set version and persist it
       last_committed_tag="$(git describe --tags --abbrev=0)"
@@ -124,5 +142,3 @@ parts:
       cp -r siteroot $CRAFT_PART_INSTALL
       cp -r bookmarks $CRAFT_PART_INSTALL
       cp version.txt $CRAFT_PART_INSTALL
-      cp supervisord.conf $CRAFT_PART_INSTALL
-      cp background-tasks-wrapper.sh $CRAFT_PART_INSTALL
